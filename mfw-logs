@@ -36,7 +36,7 @@ while true
     echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc -l)%"
 
     # Aggregate data into a csv
-    echo "$(date),$attempt,$timeoutexcept,$wdexcept" >> $export_file
+    echo "$(date '+%s'),$attempt,$timeoutexcept,$wdexcept" >> $export_file
 
     sleep 60
 done

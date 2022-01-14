@@ -12,7 +12,7 @@ do
     count=$(cat /proc/net/nf_conntrack | wc -l)
 
     # set date variable
-    date=$(date)
+    date=$(date '+%s')
 
     # set load variable
     uptime=$(uptime | cut -d ':' -f 5)

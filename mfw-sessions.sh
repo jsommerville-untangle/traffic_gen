@@ -4,20 +4,29 @@
 while true
 
 do
+    # set count variable
+    count=$(cat /proc/net/nf_conntrack | wc -l)
+
+    # set date variable
+    date=$(date)
+
+    # set load variable
+    uptime=$(uptime | cut -d ':' -f 5)
+
     # output current active session count to /tmp/session_count.log
-    cat /proc/net/nf_conntrack | wc -l >> /tmp/session_count.log
+    echo $count >> /tmp/session_count.log
 
-    # output current active session count and date to /tmp/session_count.log
-    date >> /tmp/session_count_dates.log
-    cat /proc/net/nf_conntrack | wc -l >> /tmp/session_count_dates.log
+    # output current active date, load averages, and session count to /tmp/session_count.log
+    echo "Load Averages (1/5/15 minutes):$uptime" >> /tmp/session_count_dates.log
+    echo $date >> /tmp/session_count_dates.log
+    echo $count >> /tmp/session_count_dates.log
 
-    # show date
-    date
+    # echo date, load average, and count to screen
+    echo "Date: $date"
+    echo "Load Averages (1/5/15 minutes):$uptime"
+    echo -e "Session Count: $count\n"
 
-    # echo output to screen
-    cat /proc/net/nf_conntrack | wc -l
-
-    # sleep 2 minutes
-    sleep 120
+    # sleep 1 minutes
+    sleep 60
 
 done

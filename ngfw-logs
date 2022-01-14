@@ -19,7 +19,7 @@ echo "WebDriverExceptions: $wdexcept"
 echo "Total Attempts: $attempt"
 
 # get percentage of TimeoutExceptions and log to summary
-echo "Timeout Percentage: $(echo "scale=4; $timeoutexcept/$attempt * 100" | bc | cut -d . -f 1)%%"
+echo "Timeout Percentage: $(echo "scale=4; $timeoutexcept/$attempt * 100" | bc | bc -l)%"
 
 # get percentage of WebDriverExceptions and log to summary
-echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc | cut -d . -f 1)%%" 
+echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc -l)%"

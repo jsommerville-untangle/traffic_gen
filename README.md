@@ -14,13 +14,13 @@ On the host device, make a directory called traffic_logging, this will be used f
 
 ex:
 
-mkdir -p ~/traffic_logging/ngfw
+- mkdir -p ~/traffic_logging/ngfw
 
-mkdir -p ~/traffic_logging/mfw
+- mkdir -p ~/traffic_logging/mfw
 
 # Pull Docker Image
 
-docker pull container-registry.untangle.com/traffic_gen:latest
+- docker pull container-registry.untangle.com/traffic_gen:latest
 
 # Edit .env file
 
@@ -32,54 +32,66 @@ This will create a copy of the commands listed below to /usr/local/bin and make 
 
 The following commands need to be run from the repo directory:
 
-sudo chmod +x commands.sh
+- sudo chmod +x commands.sh
 
-sudo ./commands.sh
+- sudo ./commands.sh
 
 If you need to edit:
 
-sudo nano /usr/local/bin/mfw-traffic
+- sudo nano /usr/local/bin/mfw-traffic
 
-sudo nano /usr/local/bin/ngfw-traffic
+- sudo nano /usr/local/bin/ngfw-traffic
 
-sudo nano /usr/local/bin/mfw-logs
+- sudo nano /usr/local/bin/mfw-logs
 
-sudo nano /usr/local/bin/mfw-log-backup
+- sudo nano /usr/local/bin/mfw-log-backup
 
-sudo nano /usr/local/bin/ngfw-logs
+- sudo nano /usr/local/bin/ngfw-logs
 
-sudo nano /usr/local/bin/ngfw-log-backup
+- sudo nano /usr/local/bin/ngfw-log-backup
 
 # Usage
 
-These command will ask how many clients and create the containers:
+These command require 3 parameters, number of clients, time (in minutes), and a name for the backup folder. These commands also run the *-log-backup command at the end:
 
-ngfw-traffic
+- ngfw-traffic 10 30 test_folder
 
-mfw-traffic
+- mfw-traffic 10 30 test_folder
 
-These command will ask for name to create a folder, aggregate the logs, show stats, create a summary, and backup the logs in that folder:
+These command will ask for name to create a folder, aggregate the logs, show stats, create a summary, and backup the logs in that folder. If you cancelled your ngfw/mfw-traffic commands and need to aggregate your logs, use these commands:
 
-ngfw-log-backup
+- ngfw-log-backup
 
-mfw-log-backup
+- mfw-log-backup
 
-This command will aggregate the logs, show stats:
+These commands will aggregate the logs, show stats, but will not create summary or backups, for use while ngfw/mfw-traffic commands are running for real time updates
 
-ngfw-logs
+- ngfw-logs
 
-mfw-logs
+- mfw-logs
 
 # To run containers manually
 
-replace the /path/to/repo with your repo location and X with amount of clients you want to run
+Replace X with number of clients you want to run. If needed change the directory to match your repo.
 
-docker-compose -f /path/to/repo/mfw.yml up --scale mfw-traffic=X
+- docker-compose -f ~/traffic_gen/mfw.yml up --scale mfw-traffic=X
 
-docker-compose -f /path/to/repo/ngfw.yml up --scale ngfw-traffic=X
+- docker-compose -f ~/traffic_gen/ngfw.yml up --scale ngfw-traffic=X
 
 # To stop containers that are running daemonized
 
-docker-compose -f /path/to/repo/mfw.yml down
+- docker-compose -f ~/traffic_gen/mfw.yml down
 
-docker-compose -f /path/to/repo/ngfw.yml down
+- docker-compose -f ~/traffic_gen/ngfw.yml down
+
+# mfw-sessions commands
+
+These commands are to be run on mfw itself. 
+
+This command will collect date, load averages, and active sessions every 1 minute. Prints information to files sessions_count.log and sessions_count_dates.log
+
+- mfw-sessions.sh 
+
+This command will parse logs created by mfw-sessions.sh, creates a report .summary file with that information and prints to screen. requires parameter for file name
+
+- mfw-sessions-avg.sh test_file

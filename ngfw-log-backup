@@ -21,10 +21,10 @@ echo "WebDriverExceptions: $wdexcept" >> ~/traffic_logging/ngfw/$folder.summary
 echo "Total Attempts: $attempt" >> ~/traffic_logging/ngfw/$folder.summary
 
 # get percentage of TimeoutExceptions and log to summary
-echo "Timeout Percentage: $(echo "scale=4; $timeoutexcept/$attempt * 100" | bc | cut -d . -f 1)%%" >> ~/traffic_logging/ngfw/$folder.summary
+echo "Timeout Percentage: $(echo "scale=4; $timeoutexcept/$attempt * 100" | bc -l)%" >> ~/traffic_logging/ngfw/$folder.summary
 
 # get percentage of WebDriverExceptions and log to summary
-echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc | cut -d . -f 1)%%" >> ~/traffic_logging/ngfw/$folder.summary
+echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc -l)%" >> ~/traffic_logging/ngfw/$folder.summary
 
 # cat summary
 cat ~/traffic_logging/ngfw/$folder.summary

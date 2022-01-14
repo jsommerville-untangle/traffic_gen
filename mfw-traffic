@@ -1,7 +1,27 @@
 #!/bin/bash
 
-# ask how many clients
-read -p "How many client containers do you want to run? " clients
+# clients, time, and date variables
+clients=$1
+time="$2m"
+folder=$3
 
-# bring up container using ngfw.yml
+# check for missing variables
+if [ -z $1 ]||[ -z $2 ]|[ -z $3 ]; then
+    echo "Missing parameter, please include number of clients, time (in minutes) to run, and a name for backup folder, ex:"
+    echo "mfw-traffic 10 30 test_folder"
+    echo "The command above runs 10 clients for 30 minutes and does a log backup in ~/traffic_logging/mfw/test_folder"
+    echo "Summary of traffic will print to screen and save to ~/traffic_logging/mfw/test_folder.summary"
+    exit
+fi
+
+# bring up container using mfw.yml
 docker-compose -f ~/traffic_gen/mfw.yml up --scale mfw_traffic=$clients -d
+
+# sleep for time specified by parameter
+sleep $time
+
+# bring down containers
+docker-compose -f mfw.yml down
+
+# create backup logs using mfw-log-backup script
+echo $folder | mfw-log-backup

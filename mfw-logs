@@ -1,25 +1,42 @@
 #!/bin/bash
 
-# set variable for count of timeout exceptions
-timeoutexcept=$(grep Timeout ~/traffic_logging/mfw/*.log | wc -l)
+export_file=/tmp/timeout-report
 
-# set variable for count of web driver exceptions
-wdexcept=$(grep WebDriverException ~/traffic_logging/mfw/*.log | wc -l)
+# Recreate csv each time
+mv $export_file /tmp/timeout-report-$(date -Iminutes)
+echo "date,attempts,timeouts,webdriverexceptions" > $export_file
 
-# set variable for count of every attempted URL
-attempt=$(grep Attempting ~/traffic_logging/mfw/*.log | wc -l)
 
-# log TimeoutExceptions to summary
-echo "TimeoutExceptions: $timeoutexcept"
+# loop to track session counts on mfw every 2 minutes
+while true
 
-# log WebDriverExceptions to summary
-echo "WebDriverExceptions: $wdexcept"
+    do
+    # set variable for count of timeout exceptions
+    timeoutexcept=$(grep Timeout ~/traffic_logging/mfw/*.log | wc -l)
 
-# log total attempts to summary
-echo "Total Attempts: $attempt"
+    # set variable for count of web driver exceptions
+    wdexcept=$(grep WebDriverException ~/traffic_logging/mfw/*.log | wc -l)
 
-# get percentage of TimeoutExceptions and log to summary
-echo "Timeout Percentage: $(echo "scale=4; $timeoutexcept/$attempt * 100" | bc -l)%"
+    # set variable for count of every attempted URL
+    attempt=$(grep Attempting ~/traffic_logging/mfw/*.log | wc -l)
 
-# get percentage of WebDriverExceptions and log to summary
-echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc -l)%"
+    # log TimeoutExceptions to summary
+    echo "TimeoutExceptions: $timeoutexcept"
+
+    # log WebDriverExceptions to summary
+    echo "WebDriverExceptions: $wdexcept"
+
+    # log total attempts to summary
+    echo "Total Attempts: $attempt"
+
+    # get percentage of TimeoutExceptions and log to summary
+    echo "Timeout Percentage: $(echo "scale=4; $timeoutexcept/$attempt * 100" | bc -l)%"
+
+    # get percentage of WebDriverExceptions and log to summary
+    echo "WebDriverException Percentage: $(echo "scale=4; $wdexcept/$attempt * 100" | bc -l)%"
+
+    # Aggregate data into a csv
+    echo "$(date),$attempt,$timeoutexcept,$wdexcept" >> $export_file
+
+    sleep 60
+done

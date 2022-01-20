@@ -15,7 +15,7 @@ do
     date=$(date '+%s')
 
     # set load variable
-    uptime=$(uptime | cut -d ':' -f 5)
+    uptime=$(uptime | awk -F': ' '{print $2}')
 
     # output current active session count to /tmp/session_count.log
     echo $count >> /tmp/session_count.log
@@ -27,7 +27,7 @@ do
 
     # echo date, load average, and count to screen
     echo "Date: $date"
-    echo "Load Averages (1/5/15 minutes):$uptime"
+    echo "Load Averages (1/5/15 minutes): $uptime"
     echo -e "Session Count: $count\n"
 
     # Echo that stuff into a csv

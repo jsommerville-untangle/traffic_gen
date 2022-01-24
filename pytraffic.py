@@ -42,8 +42,7 @@ while True:
 
         # print URL and page title
         logfile.write(f'Sucessfully loaded {url}') 
-        print(url)
-        print(driver.title)
+        print(f'{url} driver title: {driver.title}\n')
 
     # if timeout reached, restart loop    
     except TimeoutException as e:

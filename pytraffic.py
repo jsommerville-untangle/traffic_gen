@@ -6,15 +6,14 @@ import random
 from random import randint
 from time import sleep
 
-
-# set path of chrome driver
-s = Service('/usr/local/bin/chromedriver')
-
 # selenium chrome options
 chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument('--disable-dev-shm-usage')
+
+minSleep=5
+maxSleep=20
 
 # random number for log file
 file_name = str(randint(500000,10000000))
@@ -23,17 +22,16 @@ file_name = str(randint(500000,10000000))
 while True:
     try:
         # sets random URL from url.txt
-        #url = random.choice(open('url.txt').readlines())
         url = random.choice(open('url.txt').readlines())
 
         # open logfile
         logfile = open("/logs/"+file_name+".log", "a")
 
         # log attempt
-        logfile.write(str("Attempting to access " +str(url)))
+        logfile.write(f'Attempting to access {url}\n') 
 
         # set webdriver
-        driver = webdriver.Chrome(service=s, options=chrome_options)
+        driver = webdriver.Chrome('/usr/local/bin/chromedriver', options=chrome_options)
 
         # set timeout to 25 on page load
         driver.set_page_load_timeout(25)
@@ -43,38 +41,33 @@ while True:
         driver.maximize_window()
 
         # print URL and page title
+        logfile.write(f'Sucessfully loaded {url}') 
         print(url)
         print(driver.title)
 
-        # after successful page load, close log file for write
-        logfile.close()
-
-        # wait random time between 15-45 seconds before restarting loop
-        sleep(randint(15,45))
-
-        # quit driver
-        driver.quit()
-
     # if timeout reached, restart loop    
     except TimeoutException as e:
-
+        timeoutMsg=f'TimeoutException: 25 second timeout reached on {url} stack: {e}\n'
         # log TimeoutException, close log file
-        logfile.write(str("TimeoutException: 25 second timeout reached on " +str(url)))
-        logfile.close()
+        logfile.write(timeoutMsg)
 
         # print TimeoutException to docker logs and quit driver
-        print("Timeout on", url, "Restarting loop")
-        sleep(randint(15,45))
-        driver.quit()
+        print (timeoutMsg)
 
     # if WebDriverException (connection loss), restart loop
     except WebDriverException as e:
+        webDriverMsg=f'WebDriverException: connection dropped on {url}\n'
 
         # log WebDriverException, close log file
-        logfile.write(str("WebDriverException: connection dropped on " +str(url)))
-        logfile.close()
+        logfile.write(webDriverMsg)
 
         # print WebDriverException to docker logs and quit driver
-        print("WebDriverException, restarting loop")
-        sleep(randint(15,45))
+        print (webDriverMsg)
+    except Exception as e:
+        otherException=f'Another type of exception for {url} occurred: {e}\n'
+        logfile.write(otherException)
+        print (otherException)
+    finally:
+        logfile.close()
+        sleep(randint(minSleep,maxSleep))
         driver.quit()

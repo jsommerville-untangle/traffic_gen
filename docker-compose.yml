@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  traffic_gen:
+    build:
+      context: .
+    command: python3 -u pytraffic.py
+    #command: tail -f /dev/null
+    networks:
+      traffic_net:
+    volumes:
+      - ${LOG_DIR}:/logs/
+
+networks:
+  traffic_net:
+    driver: macvlan
+    driver_opts:
+      parent: ${NIC}
+    ipam:
+      config:
+      - subnet: ${NETWORK_RANGE}
+        gateway: ${NETWORK_GATEWAY}
+        ip_range: ${NETWORK_DHCP_RANGE}

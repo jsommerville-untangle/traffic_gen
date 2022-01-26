@@ -15,13 +15,13 @@ if [ -z $1 ]||[ -z $2 ]|[ -z $3 ]; then
 fi
 
 # bring up container using mfw.yml
-docker-compose -f ~/traffic_gen/mfw.yml up --scale mfw_traffic=$clients -d
+docker-compose up --scale traffic_gen=$clients -d
 
 # sleep for time specified by parameter
 sleep $time
 
 # bring down containers
-docker-compose -f mfw.yml down
+docker-compose down
 
 # create backup logs using mfw-log-backup script
 echo $folder | mfw-log-backup

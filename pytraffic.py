@@ -8,12 +8,18 @@ from time import sleep
 
 # selenium chrome options
 chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--disable-gpu')
+# chrome_options.setPageLoadStrategy(PageLoadStrategy.EAGER)
 
-minSleep=5
-maxSleep=20
+urlFileName='url.txt'
+
+minSleep=15
+maxSleep=45
+
+pageTimeout=25
 
 # random number for log file
 file_name = str(randint(500000,10000000))
@@ -22,7 +28,7 @@ file_name = str(randint(500000,10000000))
 while True:
     try:
         # sets random URL from url.txt
-        url = random.choice(open('url.txt').readlines())
+        url = random.choice(open(urlFileName).readlines())
 
         # open logfile
         logfile = open("/logs/"+file_name+".log", "a")
@@ -33,20 +39,20 @@ while True:
         # set webdriver
         driver = webdriver.Chrome('/usr/local/bin/chromedriver', options=chrome_options)
 
-        # set timeout to 25 on page load
-        driver.set_page_load_timeout(25)
+        # set timeout to pageTimeout on page load
+        driver.set_page_load_timeout(pageTimeout)
 
         # open page and maximize window
         driver.get(url)
         driver.maximize_window()
 
         # print URL and page title
-        logfile.write(f'Sucessfully loaded {url}') 
+        logfile.write(f'Sucessfully loaded {url}\n') 
         print(f'{url} driver title: {driver.title}\n')
 
     # if timeout reached, restart loop    
     except TimeoutException as e:
-        timeoutMsg=f'TimeoutException: 25 second timeout reached on {url} stack: {e}\n'
+        timeoutMsg=f'TimeoutException: {pageTimeout} second timeout reached on {url} stack: {e}\n'
         # log TimeoutException, close log file
         logfile.write(timeoutMsg)
 

@@ -6,6 +6,9 @@ import random
 from random import randint
 from time import sleep
 
+# set path of chrome driver
+s = Service('/usr/local/bin/chromedriver')
+
 # selenium chrome options
 chrome_options = Options()
 chrome_options.add_argument('--headless')
@@ -37,7 +40,7 @@ while True:
         logfile.write(f'Attempting to access {url}\n') 
 
         # set webdriver
-        driver = webdriver.Chrome('/usr/local/bin/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(service=s, options=chrome_options)
 
         # set timeout to pageTimeout on page load
         driver.set_page_load_timeout(pageTimeout)

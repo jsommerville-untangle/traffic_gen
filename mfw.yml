@@ -8,6 +8,9 @@ services:
       mfw_net:
     volumes:
       - ${MFW_LOG_DIR}:/logs/
+    #  - ./pytraffic.py:/traffic/pytraffic.py
+      - ./url.txt:/traffic_gen/url.txt
+      - ./entrypoint.sh:/entrypoint.sh
 
 networks:
   # network for mfw devices 192.168.1.0/24
@@ -17,6 +20,9 @@ networks:
       parent: ${MFW_NIC}
     ipam:
       config:
+      #- subnet: 10.11.12.0/24
+      #  gateway: 10.11.12.1
+      #  ip_range: 10.11.12.200/26
       - subnet: 192.168.1.0/24
         gateway: 192.168.1.1
         ip_range: 192.168.1.200/26
